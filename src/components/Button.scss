@@ -1,0 +1,45 @@
+.Button {
+  background: var(--light-color);
+  box-shadow: -10px -10px 12px 0 #ffffff, 10px 10px 12px 0 var(--shadow-color);
+  border: none;
+  border-radius: 0.5rem;
+  transition: all 0.5s ease-in-out;
+  padding: 0.7rem 1rem;
+  color: var(--main-color);
+  text-align: center;
+  text-transform: uppercase;
+
+  &.primary {
+    background-color: var(--accent-color);
+    color: white;
+
+    &:hover {
+      color: white;
+      background-color: var(--main-color);
+    }
+  }
+
+  .fas {
+    font-size: 1rem;
+    display: inline-block;
+    margin-right: 0.5rem;
+  }
+
+  &.secondary {
+    font-size: 1rem;
+    background-color: var(--main-color);
+    color: white;
+
+    &:hover {
+      color: white;
+    }
+  }
+
+  &:hover {
+    color: var(--accent-color);
+  }
+
+  &:first-child {
+    margin-right: 1rem;
+  }
+}
