@@ -1,0 +1,50 @@
+:root {
+  --main-color: #1044ff;
+  --main-color-light: rgba(16, 68, 255, 0.2);
+  --accent-color: #ff1084;
+  --light-color: #f1f3ff;
+  --shadow-color: rgb(198, 208, 255);
+}
+
+.Logo {
+  text-align: center;
+  margin: 4rem 0;
+}
+body {
+  font-family: "Barlow Condensed", sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  color: var(--main-color);
+  font-size: 16px;
+}
+
+body,
+html {
+  background: var(--light-color);
+  height: 100%;
+}
+button,
+input {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1rem;
+}
+
+button {
+  cursor: pointer;
+}
+.box {
+  background: #f1f3ff;
+  box-shadow: -18px -18px 30px 0 #ffffff, 18px 18px 30px 0 var(--shadow-color);
+  border-radius: 23px;
+  padding: 0 3rem 3rem;
+  max-width: 800px;
+  margin-bottom: 3rem;
+
+  &__actions {
+    border-top: 1px solid white;
+    text-align: center;
+    padding: 2.5rem 0 0;
+  }
+}
