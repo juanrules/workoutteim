@@ -55,9 +55,13 @@ export default (state, action) => {
       };
 
     case actionTypes.DELETE_TIMER:
+      const filteredTimers = [
+        ...state.timers.filter((_e, i) => i !== action.index),
+      ];
       return {
         ...state,
-        timers: [...state.timers.filter((_e, i) => i !== action.index)],
+        timers: filteredTimers,
+        snapshots: [...state.snapshots, filteredTimers],
       };
 
     case actionTypes.ADD_TIME:
@@ -69,12 +73,15 @@ export default (state, action) => {
           ),
         ],
       };
+
     case actionTypes.REDUCE_TIME:
       return {
         ...state,
         timers: [
           ...state.timers.map((e, i) =>
-            i === action.index ? { ...e, time: e.time - 15 } : { ...e }
+            i === action.index
+              ? { ...e, time: e.time - 15 < 0 ? 0 : e.time - 15 }
+              : { ...e }
           ),
         ],
       };
