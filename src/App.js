@@ -1,4 +1,5 @@
 import React, { useReducer } from "react";
+import React, { useReducer, useEffect } from "react";
 import logo from "./logo.svg";
 import "./App.scss";
 import Timer from "./components/Timer";
@@ -53,6 +54,12 @@ const App = () => {
   const takeSnapshop = (snapshot) => {
     dispatch({ type: actionTypes.TAKE_SNAPSHOT, snapshot });
   };
+
+  useEffect(() => {
+    if (state.timesUp) {
+      audio.play();
+    }
+  }, [audio, state.timesUp]);
 
   return (
     <div className="App">
