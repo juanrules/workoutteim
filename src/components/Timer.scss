@@ -1,3 +1,5 @@
+@import "../utilities/scss/breakpoints";
+
 .Timer {
   $block: &;
   display: grid;
@@ -9,6 +11,12 @@
   padding-top: 2rem;
   padding-bottom: 2rem;
   position: relative;
+
+  @include respondTo(sm) {
+    grid-template-columns: auto 3rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
 
   &:before {
     content: "";
@@ -45,6 +53,11 @@
   &__time {
     font-size: 4.125rem;
     width: 8rem;
+
+    @include respondTo(sm) {
+      font-size: 3rem;
+      width: 6rem;
+    }
   }
 
   &__controls {
@@ -71,15 +84,15 @@
     }
   }
 
-  input[type="number"],
-  input[type="time"] {
+  input[type="text"] {
     font-weight: 400;
     padding: 0;
-    font-size: 4.125rem;
+    font-size: 2.25rem;
+    text-transform: uppercase;
     letter-spacing: 0;
     display: block;
     color: var(--primary-color);
-    width: 4.125rem;
+    // width: 4.125rem;
     background-color: transparent;
     border: none;
     display: inline-block;
@@ -100,6 +113,9 @@
     display: flex;
     align-items: center;
     width: 100%;
+    @include respondTo(sm) {
+      font-size: 1.5rem;
+    }
   }
   &__edit-action {
     font-size: 1rem;
@@ -113,6 +129,10 @@
 
   &__remove {
     font-size: 1.5rem;
+
+    @include respondTo(sm) {
+      font-size: 1rem;
+    }
   }
 
   &:only-child,
@@ -120,6 +140,10 @@
     border-bottom: 1px solid var(--main-color-light);
     margin-bottom: 0;
     padding-bottom: 2rem;
+
+    @include respondTo(sm) {
+      padding-bottom: 1.5rem;
+    }
   }
 
   &:only-child {
@@ -138,7 +162,8 @@
     }
   }
 
-  &.is-inactive {
+  &.is-inactive,
+  &.is-placeholder {
     opacity: 0.5;
 
     #{$block}__start,

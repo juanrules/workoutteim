@@ -1,3 +1,5 @@
+@import "../utilities/scss/breakpoints";
+
 .Button {
   background: var(--light-color);
   box-shadow: -10px -10px 12px 0 #ffffff, 10px 10px 12px 0 var(--shadow-color);
