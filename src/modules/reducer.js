@@ -1,5 +1,5 @@
 import actionTypes from "../constants/actionTypes";
-
+import * as constants from "../constants/main";
 export default (state, action) => {
   switch (action.type) {
     case actionTypes.START_TIMER:
@@ -8,7 +8,9 @@ export default (state, action) => {
         return {
           ...state,
           isRunning: false,
-          timers: state.snapshots[state.snapshots.length - 1],
+          timers: [],
+          placeholder: state.snapshots[state.snapshots.length - 1],
+          timesUp: true,
         };
       }
 
@@ -41,10 +43,19 @@ export default (state, action) => {
         ],
       };
 
+    case actionTypes.DELETE_TIMERS:
+      return {
+        ...state,
+        timers: [],
+      };
+
     case actionTypes.RESET_TIME:
       return {
         ...state,
         timers: action.snapshot,
+        placeholder: [],
+        timesUp: false,
+        isRunning: false,
       };
 
     case actionTypes.ADD_NEW_TIMER:
@@ -64,26 +75,53 @@ export default (state, action) => {
         snapshots: [...state.snapshots, filteredTimers],
       };
 
-    case actionTypes.ADD_TIME:
+    case actionTypes.SET_TIMER_TITLE:
+      const newTitleTimers = [
+        ...state.timers.map((e, i) =>
+          i === action.index ? { ...e, title: action.title } : { ...e }
+        ),
+      ];
+
       return {
         ...state,
-        timers: [
-          ...state.timers.map((e, i) =>
-            i === action.index ? { ...e, time: e.time + 15 } : { ...e }
-          ),
-        ],
+        timers: newTitleTimers,
+        snapshots: [...state.snapshots, newTitleTimers],
+      };
+
+    case actionTypes.ADD_TIME:
+      const addedTimeTimers = [
+        ...state.timers.map((e, i) =>
+          i === action.index
+            ? { ...e, time: e.time + constants.TIME_INCREMENT }
+            : { ...e }
+        ),
+      ];
+
+      return {
+        ...state,
+        timers: addedTimeTimers,
+        snapshots: [...state.snapshots, addedTimeTimers],
       };
 
     case actionTypes.REDUCE_TIME:
+      const reducedTimeTimers = [
+        ...state.timers.map((e, i) =>
+          i === action.index
+            ? {
+                ...e,
+                time:
+                  e.time - constants.TIME_INCREMENT < 0
+                    ? 1
+                    : e.time - constants.TIME_INCREMENT,
+              }
+            : { ...e }
+        ),
+      ];
+
       return {
         ...state,
-        timers: [
-          ...state.timers.map((e, i) =>
-            i === action.index
-              ? { ...e, time: e.time - 15 < 0 ? 0 : e.time - 15 }
-              : { ...e }
-          ),
-        ],
+        timers: reducedTimeTimers,
+        snapshots: [...state.snapshots, reducedTimeTimers],
       };
 
     case actionTypes.TAKE_SNAPSHOT:

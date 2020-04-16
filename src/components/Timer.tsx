@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import "./Timer.scss";
 import Button from "./Button";
-import { addZero } from "../utilities/time";
+import { calculateMins, calculateSeconds } from "../utilities/time";
 import * as constants from "../constants/main";
 
 type iTimer = {
@@ -16,7 +16,9 @@ type iTimer = {
   stopTimer: any;
   deleteTimer: any;
   setTime: any;
+  setTimerTitle: any;
   isRunning: boolean;
+  isPlaceholder: boolean;
 };
 
 const Timer = ({
@@ -30,16 +32,11 @@ const Timer = ({
   increaseTime,
   deleteTimer,
   setTime,
+  setTimerTitle,
   isRunning,
+  isPlaceholder,
 }: iTimer): ReactElement => {
-  const calculateMins = (time: number) =>
-    addZero(Math.floor((time % 3600) / 60));
   const [counter, setCounter] = useState(time);
-
-  const calculateSeconds = (time: number) => addZero(time % 60);
-
-  const minutes = calculateMins(counter);
-  const seconds = calculateSeconds(counter);
 
   useEffect(() => {
     if (isActive) {
@@ -51,35 +48,35 @@ const Timer = ({
         startTimer(index + 1);
       }
     }
-  }, [isActive, time, index, startTimer, setTime, counter]);
+  }, [isActive, counter, startTimer, index, time, setTime]);
 
   return (
     <div
       className={`Timer ${cssClass} ${isActive ? "is-active" : ""} ${
-        !time ? "is-inactive" : ""
-      }`}
+        !counter ? "is-inactive" : ""
+      } `}
     >
       <div className="Timer__body">
         <span className="Timer__time">
-          {minutes}:{seconds}
+          {calculateMins(counter)}:{calculateSeconds(counter)}
         </span>
 
-        {!isRunning && time !== 0 && (
+        {!isRunning && !isPlaceholder && time !== 0 && (
           <span className="Timer__controls">
             <i
               className="fas fa-sort-up"
-              onClick={async () => {
-                await increaseTime(index);
+              onClick={() => {
+                increaseTime(index);
                 setCounter(counter + constants.TIME_INCREMENT);
               }}
             ></i>
             <i
               className="fas fa-sort-down"
-              onClick={async () => {
-                await reduceTime(index);
+              onClick={() => {
+                reduceTime(index);
                 setCounter(
                   counter - constants.TIME_INCREMENT < 0
-                    ? 0
+                    ? 1
                     : counter - constants.TIME_INCREMENT
                 );
               }}
@@ -87,13 +84,21 @@ const Timer = ({
           </span>
         )}
         <span className="Timer__title">
-          {`${title} ${index + 1}`}
-          <span className="Timer__edit-action">Click here to edit</span>
+          <input
+            type="text"
+            placeholder={`Exercise ${index + 1}`}
+            value={title || `Exercise ${index + 1}`}
+            onChange={(e) => setTimerTitle(index, e.target.value)}
+            disabled={isRunning}
+          />
+          {/* {!isPlaceholder && (
+            <span className="Timer__edit-action">Click here to edit</span>
+          )} */}
         </span>
       </div>
 
       <div className="Timer__actions">
-        {!isRunning && (
+        {!isRunning && !isPlaceholder && (
           <Button cssClass="Timer__remove" callBack={() => deleteTimer(index)}>
             <i className="far fa-trash-alt"></i>
           </Button>

@@ -1,4 +1,3 @@
-import React, { useReducer } from "react";
 import React, { useReducer, useEffect } from "react";
 import logo from "./logo.svg";
 import "./App.scss";
@@ -8,12 +7,17 @@ import Toolbar from "./components/Toolbar";
 import reducer from "./modules/reducer";
 import initialState from "./constants/initialState";
 import actionTypes from "./constants/actionTypes";
+import finishLineAudio from "./audio/OK Hand Sign.wav";
 
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const startTimer = (index) => {
     dispatch({ type: actionTypes.START_TIMER, index });
+  };
+
+  const deleteTimers = async () => {
+    dispatch({ type: actionTypes.DELETE_TIMERS });
   };
 
   const addNewTimer = (timer) => {
@@ -28,14 +32,14 @@ const App = () => {
       index,
     });
   };
-  const resetTime = (snapshot) => {
-    dispatch({
+  const resetTime = async (snapshot) => {
+    await dispatch({
       type: actionTypes.RESET_TIME,
       snapshot,
     });
   };
 
-  const pauseTime = () => {
+  const pauseTime = async () => {
     dispatch({ type: actionTypes.PAUSE_TIME });
   };
 
@@ -55,6 +59,12 @@ const App = () => {
     dispatch({ type: actionTypes.TAKE_SNAPSHOT, snapshot });
   };
 
+  const setTimerTitle = (index, title) => {
+    dispatch({ type: actionTypes.SET_TIMER_TITLE, index, title });
+  };
+
+  const audio = new Audio(finishLineAudio);
+
   useEffect(() => {
     if (state.timesUp) {
       audio.play();
@@ -68,18 +78,30 @@ const App = () => {
       </header>
 
       <Toolbar className="Toolbar">
+        <Button
+          cssClass=""
+          callBack={async () => {
+            await deleteTimers();
+            resetTime(
+              state.snapshots.length
+                ? state.snapshots[state.snapshots.length - 1]
+                : initialState.timers
+            );
+          }}
+        >
+          <i className="fas fa-sync-alt"></i> Reset timers
+        </Button>
         {state.isRunning && (
           <Button
-            cssClass=""
-            callBack={() => {
-              pauseTime();
+            callBack={async () => {
+              await pauseTime();
             }}
           >
             <i className="fas fa-pause"></i> Pause
           </Button>
         )}
 
-        {!state.isRunning && (
+        {!state.isRunning && !state.timesUp && (
           <Button
             cssClass="primary"
             callBack={() => {
@@ -93,19 +115,6 @@ const App = () => {
             <i className="fas fa-play"></i> Start
           </Button>
         )}
-
-        <Button
-          cssClass=""
-          callBack={() => {
-            resetTime(
-              state.snapshots.length
-                ? state.snapshots[state.snapshots.length - 1]
-                : initialState.timers
-            );
-          }}
-        >
-          <i className="fas fa-sync-alt"></i> Reset timers
-        </Button>
       </Toolbar>
 
       <div className="box">
@@ -122,22 +131,48 @@ const App = () => {
                 deleteTimer={deleteTimer}
                 setTime={setTime}
                 isRunning={state.isRunning}
+                setTimerTitle={setTimerTitle}
               />
             ))}
-        </div>
 
-        {!state.isRunning && (
-          <div className="box__actions">
+          {state.placeholder.length > 0 && (
+            <div className="box__timeUp">
+              {state.placeholder.map((e, i) => (
+                <Timer key={i} isPlaceholder={true} {...e} index={i} />
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="box__actions">
+          {!state.isRunning && !state.timesUp && (
             <Button
               cssClass="secondary"
               callBack={() => {
-                addNewTimer({ title: "Exercise", time: 1, isActive: false });
+                addNewTimer({ time: 1, isActive: false });
               }}
             >
               <i className="fas fa-plus"></i> Add a timer
             </Button>
-          </div>
-        )}
+          )}
+
+          {!state.isRunning && state.timesUp && (
+            <Button
+              cssClass="primary"
+              callBack={async () => {
+                await deleteTimers();
+                await resetTime(
+                  state.snapshots.length
+                    ? state.snapshots[state.snapshots.length - 1]
+                    : initialState.timers
+                );
+
+                startTimer(0);
+              }}
+            >
+              <i className="fas fa-play"></i> Go Again
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
