@@ -208,7 +208,7 @@ const App = (): ReactElement => {
         <span role="img" aria-label="time emoji">
           ⏰{" "}
         </span>{" "}
-        by <a href="https://thisjuanpernia.com">this Juan</a>
+        by <a href="https://thisjuanpernia.com">this Juan</a>. // v{version}
       </Footer>
       {state.showHelp && (
         <Modal
