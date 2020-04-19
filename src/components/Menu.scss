@@ -1,0 +1,12 @@
+.Menu {
+  $block: &;
+  position: absolute;
+  left: 2rem;
+  top: 2rem;
+  display: flex;
+  flex-direction: column;
+
+  & > * {
+    margin-bottom: 1rem;
+  }
+}

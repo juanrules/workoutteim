@@ -1,0 +1,63 @@
+@import "../utilities/scss/breakpoints";
+
+.Button {
+  background: var(--light-color);
+  box-shadow: -10px -10px 12px 0 #ffffff, 10px 10px 12px 0 var(--shadow-color);
+  border: none;
+  border-radius: 0.5rem;
+  transition: all 0.5s ease-in-out;
+  padding: 0.7rem 1rem;
+  color: var(--main-color);
+  text-align: center;
+  text-transform: uppercase;
+
+  &.primary {
+    background-color: var(--accent-color);
+    color: white;
+
+    &:hover {
+      color: white;
+      background-color: var(--main-color);
+    }
+  }
+
+  .fas {
+    display: inline-block;
+    margin-right: 0.5rem;
+  }
+
+  &.secondary {
+    font-size: 1rem;
+    background-color: var(--main-color);
+    color: white;
+
+    &:hover {
+      color: white;
+    }
+  }
+
+  &:hover {
+    color: var(--accent-color);
+  }
+
+  &:first-child {
+    margin-right: 1rem;
+  }
+
+  &.icon-only {
+    border-radius: 100%;
+    width: 3rem;
+    height: 3rem;
+    line-height: 0;
+    .fas {
+      margin-right: 0;
+    }
+  }
+
+  &.link {
+    background-color: transparent;
+    box-shadow: none;
+    font-family: "Barlow", sans-serif;
+    font-weight: 600;
+  }
+}

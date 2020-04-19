@@ -1,0 +1,58 @@
+.Modal {
+  $block: &;
+  visibility: hidden;
+  width: 600px;
+  position: absolute;
+  top: calc(50% - 300px);
+  left: calc(50% - 300px);
+  background-color: var(--main-color);
+  color: white;
+  margin: 1rem;
+  border-radius: 1rem;
+  z-index: 2;
+  padding: 2rem;
+  line-height: 1.5;
+  box-shadow: 0 0px 40px 0 var(--shadow-color);
+  transition: all 0.5s ease-in-out;
+  opacity: 0;
+  font-size: 1.25rem;
+  font-family: "Barlow", sans-serif;
+
+  &__title {
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 0rem;
+    font-family: "Barlow Condensed", sans-serif;
+  }
+
+  p {
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  a {
+    color: var(--accent-color);
+  }
+
+  &__backDrop {
+    visibility: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: url("/close-icon.svg"), auto;
+    opacity: 0;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0);
+  }
+
+  &.is-active {
+    visibility: visible;
+    animation: slideDown 0.5s forwards ease-in-out;
+
+    & + #{$block}__backDrop {
+      visibility: visible;
+      opacity: 0;
+    }
+  }
+}
