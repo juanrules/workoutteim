@@ -1,4 +1,6 @@
 @import "./utilities/scss/breakpoints";
+@import "./utilities/scss/animations";
+@import "./utilities/scss/aligment";
 
 :root {
   --main-color: #1044ff;
@@ -6,6 +8,7 @@
   --accent-color: #ff1084;
   --light-color: #f1f3ff;
   --shadow-color: rgb(198, 208, 255);
+  --light-text: #9cabe8;
 }
 
 .Logo {
@@ -22,6 +25,9 @@ body {
   font-size: 16px;
 }
 
+iframe {
+  border: 0;
+}
 body,
 html {
   background: var(--light-color);
@@ -36,13 +42,28 @@ input {
 button {
   cursor: pointer;
 }
+a {
+  color: var(--main-color);
+}
+
+.App {
+  &.modalIsActive {
+    main,
+    header,
+    nav,
+    footer {
+      animation: makeItBlur 0.15s ease-in-out forwards;
+    }
+  }
+}
+
 .box {
   background: #f1f3ff;
   box-shadow: -18px -18px 30px 0 #ffffff, 18px 18px 30px 0 var(--shadow-color);
   border-radius: 23px;
   padding: 0 3rem 3rem;
   max-width: 800px;
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
 
   @include respondTo(sm) {
     max-width: 100%;
