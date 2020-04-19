@@ -7,7 +7,7 @@ interface iToolbar {
 }
 
 const Timer = ({ cssClass, children }: iToolbar): ReactElement => {
-  return <div className={`Toolbar`}>{children}</div>;
+  return <div className={`Toolbar ${cssClass}`}>{children}</div>;
 };
 
 export default Timer;

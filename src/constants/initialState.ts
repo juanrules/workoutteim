@@ -2,19 +2,13 @@ export default {
   isRunning: false,
   timers: [
     {
-      time: 1,
-      isActive: false,
-    },
-    {
-      time: 1,
-      isActive: false,
-    },
-    {
-      time: 2,
+      time: 60,
       isActive: false,
     },
   ],
   snapshots: [],
   placeholder: [],
   timesUp: false,
+  showCredits: false,
+  showHelp: false,
 };

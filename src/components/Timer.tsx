@@ -91,9 +91,6 @@ const Timer = ({
             onChange={(e) => setTimerTitle(index, e.target.value)}
             disabled={isRunning}
           />
-          {/* {!isPlaceholder && (
-            <span className="Timer__edit-action">Click here to edit</span>
-          )} */}
         </span>
       </div>
 

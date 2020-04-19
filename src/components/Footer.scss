@@ -1,0 +1,14 @@
+.Footer {
+  padding: 0.4rem 0 1rem;
+  margin-top: 4rem;
+  border-top: 1px solid var(--main-color-light);
+  color: var(--light-text);
+  text-transform: uppercase;
+  letter-spacing: 0.07rem;
+
+  width: 200px;
+
+  a {
+    color: var(--light-text);
+  }
+}
