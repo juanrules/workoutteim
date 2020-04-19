@@ -130,6 +130,18 @@ export default (state, action) => {
         snapshots: [...state.snapshots, action.snapshot],
       };
 
+    case actionTypes.SHOW_CREDITS:
+      return {
+        ...state,
+        showCredits: !state.showCredits,
+      };
+
+    case actionTypes.SHOW_HELP:
+      return {
+        ...state,
+        showHelp: !state.showHelp,
+      };
+
     default:
       return null;
   }
