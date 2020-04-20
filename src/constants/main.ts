@@ -1,1 +1,1 @@
-export const TIME_INCREMENT = 15;
+export const TIME_INCREMENT = 10;
