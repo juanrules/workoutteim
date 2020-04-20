@@ -117,6 +117,7 @@ const App = (): ReactElement => {
           </Button>
           {state.isRunning && (
             <Button
+              cssClass="primary"
               callBack={async () => {
                 await pauseTime();
               }}
@@ -128,7 +129,7 @@ const App = (): ReactElement => {
           {!state.isRunning && !state.timesUp && (
             <Button
               cssClass="primary"
-              callBack={() => {
+              callBack={async () => {
                 startTimer(0);
 
                 if (!state.snapshots.length) {
@@ -179,21 +180,36 @@ const App = (): ReactElement => {
             )}
 
             {!state.isRunning && state.timesUp && (
-              <Button
-                cssClass="primary"
-                callBack={async () => {
-                  await deleteTimers();
-                  await resetTime(
-                    state.snapshots.length
-                      ? state.snapshots[state.snapshots.length - 1]
-                      : initialState.timers
-                  );
+              <>
+                <Button
+                  cssClass=""
+                  callBack={async () => {
+                    await deleteTimers();
+                    resetTime(
+                      state.snapshots.length
+                        ? state.snapshots[state.snapshots.length - 1]
+                        : initialState.timers
+                    );
+                  }}
+                >
+                  <i className="fas fa-sync-alt"></i> Reset timers
+                </Button>
+                <Button
+                  cssClass="primary"
+                  callBack={async () => {
+                    await deleteTimers();
+                    await resetTime(
+                      state.snapshots.length
+                        ? state.snapshots[state.snapshots.length - 1]
+                        : initialState.timers
+                    );
 
-                  startTimer(0);
-                }}
-              >
-                <i className="fas fa-play"></i> Go Again
-              </Button>
+                    startTimer(0);
+                  }}
+                >
+                  <i className="fas fa-play"></i> Go Again
+                </Button>
+              </>
             )}
           </div>
         </div>

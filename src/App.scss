@@ -9,6 +9,7 @@
   --light-color: #f1f3ff;
   --shadow-color: rgb(198, 208, 255);
   --light-text: #9cabe8;
+  --accent-secondary-color: #60ffa6;
 }
 
 .Logo {
@@ -46,17 +47,6 @@ a {
   color: var(--main-color);
 }
 
-.App {
-  &.modalIsActive {
-    main,
-    header,
-    nav,
-    footer {
-      animation: makeItBlur 0.15s ease-in-out forwards;
-    }
-  }
-}
-
 .box {
   background: #f1f3ff;
   box-shadow: -18px -18px 30px 0 #ffffff, 18px 18px 30px 0 var(--shadow-color);
@@ -73,7 +63,11 @@ a {
   &__actions {
     border-top: 1px solid white;
     text-align: center;
-    padding: 2.5rem 0 0;
+    padding-top: 2.5rem;
+    @include respondTo(sm) {
+      padding-top: 1.5rem;
+      padding-bottom: 1rem;
+    }
   }
 
   &__timeUp {
