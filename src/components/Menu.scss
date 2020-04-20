@@ -1,3 +1,5 @@
+@import "../utilities/scss/breakpoints";
+
 .Menu {
   $block: &;
   position: absolute;
@@ -5,6 +7,10 @@
   top: 2rem;
   display: flex;
   flex-direction: column;
+
+  @include respondTo(sm) {
+    visibility: hidden;
+  }
 
   & > * {
     margin-bottom: 1rem;
