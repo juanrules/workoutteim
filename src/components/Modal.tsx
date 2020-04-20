@@ -17,6 +17,12 @@ const Modal = ({
   return (
     <>
       <div className={`Modal ${isActive ? "is-active" : ""}`}>
+        <i
+          className="Modal__closeButton fas fa-times"
+          role="button"
+          aria-label="Close modal window"
+          onClick={() => toggleModal()}
+        ></i>
         <h3 className="Modal__title">{title}</h3>
         {children}
       </div>
