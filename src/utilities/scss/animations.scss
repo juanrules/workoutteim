@@ -1,11 +1,9 @@
-@keyframes makeItBlur {
+@keyframes scaleDownEffect {
   0% {
-    filter: blur(0px);
     transform: scale(1);
   }
 
   100% {
-    filter: blur(6px);
     transform: scale(0.7);
   }
 }
@@ -19,6 +17,18 @@
   }
   100% {
     transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
     opacity: 1;
   }
 }

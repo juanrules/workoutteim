@@ -1,3 +1,5 @@
+@import "../utilities/scss/breakpoints";
+
 .Footer {
   padding: 0.4rem 0 1rem;
   margin-top: 4rem;
@@ -7,6 +9,12 @@
   letter-spacing: 0.07rem;
 
   width: 250px;
+
+  @include respondTo(sm) {
+    width: 100%;
+    text-align: center;
+    padding-top: 1rem;
+  }
 
   a {
     color: var(--light-text);

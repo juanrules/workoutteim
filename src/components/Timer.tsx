@@ -52,8 +52,8 @@ const Timer = ({
 
   return (
     <div
-      className={`Timer ${cssClass} ${isActive ? "is-active" : ""} ${
-        !counter ? "is-inactive" : ""
+      className={`Timer ${cssClass} ${isActive ? "isActive" : ""} ${
+        !counter ? "isInactive" : ""
       } `}
     >
       <div className="Timer__body">
@@ -61,7 +61,7 @@ const Timer = ({
           {calculateMins(counter)}:{calculateSeconds(counter)}
         </span>
 
-        {!isRunning && !isPlaceholder && time !== 0 && (
+        {!isRunning && !isPlaceholder && (
           <span className="Timer__controls">
             <i
               className="fas fa-sort-up"
@@ -97,7 +97,7 @@ const Timer = ({
       <div className="Timer__actions">
         {!isRunning && !isPlaceholder && (
           <Button cssClass="Timer__remove" callBack={() => deleteTimer(index)}>
-            <i className="far fa-trash-alt"></i>
+            <i className="far fa-trash-alt" aria-label="Remove timer"></i>
           </Button>
         )}
       </div>
