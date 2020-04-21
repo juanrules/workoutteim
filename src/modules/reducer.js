@@ -65,6 +65,32 @@ export default (state, action) => {
         snapshots: [...state.snapshots, [...state.timers, action.timer]],
       };
 
+    case actionTypes.ADD_REST_INTERVALS:
+      const timersPlusIntervals = state.snapshots[
+        state.snapshots.length - 1
+      ].reduce((acc, e) => acc.concat(e, action.timer), []);
+
+      timersPlusIntervals.pop();
+
+      return {
+        ...state,
+        timers: timersPlusIntervals,
+        restIntervalsToggle: true,
+      };
+
+    case actionTypes.REMOVE_REST_INTERVALS:
+      const timersMinusRestIntervals = [
+        ...state.snapshots[state.snapshots.length - 1].filter(
+          (e, i) => !e.isRestInvertal
+        ),
+      ];
+      return {
+        ...state,
+        timers: timersMinusRestIntervals,
+        restIntervalsToggle: false,
+        snapshots: [...state.snapshots, timersMinusRestIntervals],
+      };
+
     case actionTypes.DELETE_TIMER:
       const filteredTimers = [
         ...state.timers.filter((_e, i) => i !== action.index),

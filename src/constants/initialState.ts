@@ -11,4 +11,5 @@ export default {
   timesUp: false,
   showCredits: false,
   showHelp: false,
+  restIntervalsToggle: false,
 };

@@ -12,6 +12,7 @@ import { iTimer } from "./types";
 import Modal from "./components/Modal";
 import { version } from "../package.json";
 import Footer from "./components/Footer";
+import ToggleSwitch from "./components/ToggleSwitch";
 
 const finishLineAudio = require("./audio/OK_Hand _Sign.wav");
 
@@ -30,6 +31,19 @@ const App = (): ReactElement => {
     dispatch({
       type: actionTypes.ADD_NEW_TIMER,
       timer,
+    });
+  };
+
+  const addRestIntervals = async (timer: iTimer) => {
+    dispatch({
+      type: actionTypes.ADD_REST_INTERVALS,
+      timer,
+    });
+  };
+
+  const removeRestIntervals = () => {
+    dispatch({
+      type: actionTypes.REMOVE_REST_INTERVALS,
     });
   };
 
@@ -62,7 +76,7 @@ const App = (): ReactElement => {
     dispatch({ type: actionTypes.REDUCE_TIME, index, time });
   };
 
-  const takeSnapshop = (snapshot: []) => {
+  const takeSnapshop = async (snapshot: []) => {
     dispatch({ type: actionTypes.TAKE_SNAPSHOT, snapshot });
   };
 
@@ -102,6 +116,31 @@ const App = (): ReactElement => {
       </header>
       <main>
         <Toolbar cssClass="Toolbar">
+          {state.timers.length > 1 && (
+            <ToggleSwitch
+              id="intervalsSwitch"
+              cssClass={state.restIntervalsToggle ? "isActive" : ""}
+              callback={async () => {
+                if (!state.restIntervalsToggle) {
+                  console.log("add intervals");
+                  await takeSnapshop(state.timers);
+                  await deleteTimers();
+
+                  addRestIntervals({
+                    time: 20,
+                    isRestInvertal: true,
+                    title: "Rest",
+                  });
+                } else {
+                  await deleteTimers();
+                  removeRestIntervals();
+                }
+              }}
+            >
+              Add rest intervals
+            </ToggleSwitch>
+          )}
+
           <Button
             cssClass=""
             callBack={async () => {
