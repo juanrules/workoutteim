@@ -19,6 +19,7 @@ type iTimer = {
   setTimerTitle: any;
   isRunning: boolean;
   isPlaceholder: boolean;
+  isRestInvertal?: boolean;
 };
 
 const Timer = ({
@@ -27,7 +28,6 @@ const Timer = ({
   time,
   isActive,
   startTimer,
-  cssClass,
   reduceTime,
   increaseTime,
   deleteTimer,
@@ -35,6 +35,7 @@ const Timer = ({
   setTimerTitle,
   isRunning,
   isPlaceholder,
+  isRestInvertal,
 }: iTimer): ReactElement => {
   const [counter, setCounter] = useState(time);
 
@@ -52,9 +53,9 @@ const Timer = ({
 
   return (
     <div
-      className={`Timer ${cssClass} ${isActive ? "isActive" : ""} ${
+      className={`Timer  ${isActive ? "isActive" : ""} ${
         !counter ? "isInactive" : ""
-      } `}
+      } ${isRestInvertal ? "isRestInvertal" : ""}`}
     >
       <div className="Timer__body">
         <span className="Timer__time">
