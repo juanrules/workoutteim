@@ -1,5 +1,6 @@
 export interface iTimer {
   time: number;
-  isActive: boolean;
+  isActive?: boolean;
   title?: string;
+  isRestInvertal?: boolean;
 }
