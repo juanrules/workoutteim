@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.0
+
+- New feature to add Rest intervals between timers
+- Style fixes
+
 ## v0.1.1
 
 - Adding a button to close the modal windows for mobile to improve the UX
