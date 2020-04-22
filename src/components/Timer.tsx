@@ -88,7 +88,7 @@ const Timer = ({
           <input
             type="text"
             placeholder={`Exercise ${index + 1}`}
-            value={title || `Exercise ${index + 1}`}
+            value={title}
             onChange={(e) => setTimerTitle(index, e.target.value)}
             disabled={isRunning}
           />
