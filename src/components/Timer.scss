@@ -100,6 +100,11 @@
     font-family: "Barlow Condensed", sans-serif;
     width: 100%;
 
+    &::placeholder {
+      color: var(--primary-color);
+      opacity: 1;
+    }
+
     @include respondTo(sm) {
       font-size: 1.5rem;
     }
@@ -171,7 +176,13 @@
 
   &.isRestInvertal {
     &:before {
-      border: 3px solid var(--light-text);
+      border-top: 3px solid var(--accent-color);
+      border-radius: 0;
+      border-bottom: 3px solid var(--accent-color);
+      border-left: 0;
+      border-right: 0;
+      height: 4px;
+      width: 16px;
     }
 
     #{$block}__remove {
