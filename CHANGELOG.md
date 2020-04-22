@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.1
+
+- Fixing a bug that was preventing empty titles which was causing an odd behaviour in the UX
+- New style for the Rest interval stepper
+
 ## v0.2.0
 
 - New feature to add Rest intervals between timers
