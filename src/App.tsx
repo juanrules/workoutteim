@@ -263,7 +263,17 @@ const App = (): ReactElement => {
         <span role="img" aria-label="time emoji">
           ⏰{" "}
         </span>{" "}
-        by <a href="https://thisjuanpernia.com">this Juan</a>. // v{version}
+        by{" "}
+        <a href="https://thisjuanpernia.com" title="Juan's personal website">
+          this Juan
+        </a>
+        . //{" "}
+        <a
+          href="https://github.com/juanrules/workoutteim/releases"
+          title="Repository releases"
+        >
+          v{version}
+        </a>
       </Footer>
       {state.showHelp && (
         <Modal
