@@ -31,6 +31,7 @@
     top: calc(50% - 1rem);
     background-color: var(--light-color);
     z-index: 1;
+    // animation: 0.25s ease-in pulsingDot forwards;
   }
   &:after {
     content: "";
@@ -103,6 +104,10 @@
     &::placeholder {
       color: var(--primary-color);
       opacity: 1;
+    }
+
+    &:focus::placeholder {
+      color: var(--light-text);
     }
 
     @include respondTo(sm) {
@@ -183,6 +188,34 @@
       border-right: 0;
       height: 4px;
       width: 16px;
+    }
+
+    &:after {
+      height: 111%;
+    }
+
+    #{$block}__time {
+      font-size: 3rem;
+      width: 5.5rem;
+      color: var(--light-text);
+    }
+
+    #{$block}__title,
+    #{$block}__title input[type="text"] {
+      font-size: 1.5rem;
+      color: var(--light-text);
+    }
+
+    #{$block}__controls {
+      color: var(--light-text);
+      font-size: 1.2rem;
+
+      &:first-child {
+        margin-bottom: 0.2rem;
+      }
+      &:nth-child(2) {
+        margin-top: 0.2rem;
+      }
     }
 
     #{$block}__remove {
