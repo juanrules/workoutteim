@@ -1,8 +1,8 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useRef, useEffect } from "react";
 import "./Timer.scss";
 import Button from "./Button";
 import { calculateMins, calculateSeconds } from "../utilities/time";
-import * as constants from "../constants/main";
+import { scrollToElement } from "../utilities/ScrollToUtilities";
 
 type iTimer = {
   index: number;
@@ -10,16 +10,15 @@ type iTimer = {
   title: string;
   time: number;
   isActive: boolean;
-  startTimer: any;
   increaseTime: any;
   reduceTime: any;
   stopTimer: any;
   deleteTimer: any;
-  setTime: any;
   setTimerTitle: any;
   isRunning: boolean;
   isPlaceholder: boolean;
   isRestInvertal?: boolean;
+  restIntervalsToggle?: boolean;
 };
 
 const Timer = ({
@@ -27,70 +26,54 @@ const Timer = ({
   title,
   time,
   isActive,
-  startTimer,
   reduceTime,
   increaseTime,
   deleteTimer,
-  setTime,
   setTimerTitle,
   isRunning,
   isPlaceholder,
   isRestInvertal,
+  restIntervalsToggle,
 }: iTimer): ReactElement => {
-  const [counter, setCounter] = useState(time);
+  const elementRef = useRef(null);
 
   useEffect(() => {
-    if (isActive) {
-      if (counter > 0) {
-        setTimeout(() => {
-          setCounter(counter - 1);
-        }, 1000);
-      } else {
-        startTimer(index + 1);
-      }
+    if (isActive && isRunning) {
+      scrollToElement(elementRef);
     }
-  }, [isActive, counter, startTimer, index, time, setTime]);
+  }, [isActive, isRunning]);
 
   return (
     <div
-      className={`Timer  ${isActive ? "isActive" : ""} ${
-        !counter ? "isInactive" : ""
+      className={`Timer  ${isActive && isRunning ? "isActive" : ""} ${
+        !time ? "isInactive" : ""
       } ${isRestInvertal ? "isRestInvertal" : ""}`}
+      ref={elementRef}
     >
       <div className="Timer__body">
         <span className="Timer__time">
-          {calculateMins(counter)}:{calculateSeconds(counter)}
+          {calculateMins(time)}:{calculateSeconds(time)}
         </span>
 
         {!isRunning && !isPlaceholder && (
           <span className="Timer__controls">
             <i
               className="fas fa-sort-up"
-              onClick={() => {
-                increaseTime(index);
-                setCounter(counter + constants.TIME_INCREMENT);
-              }}
+              onClick={() => increaseTime(index)}
             ></i>
             <i
               className="fas fa-sort-down"
-              onClick={() => {
-                reduceTime(index);
-                setCounter(
-                  counter - constants.TIME_INCREMENT < 0
-                    ? 1
-                    : counter - constants.TIME_INCREMENT
-                );
-              }}
+              onClick={() => reduceTime(index)}
             ></i>
           </span>
         )}
         <span className="Timer__title">
           <input
             type="text"
-            placeholder={`Exercise ${index + 1}`}
+            placeholder={`Exercise ${!restIntervalsToggle ? index + 1 : ""}`}
             value={title}
             onChange={(e) => setTimerTitle(index, e.target.value)}
-            disabled={isRunning}
+            disabled={isRunning || isRestInvertal}
           />
         </span>
       </div>

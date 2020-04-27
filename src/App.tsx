@@ -6,99 +6,88 @@ import Button from "./components/Button";
 import Toolbar from "./components/Toolbar";
 import reducer from "./modules/reducer";
 import initialState from "./constants/initialState";
-import actionTypes from "./constants/actionTypes";
-import Menu from "./components/Menu";
 import { iTimer } from "./types";
+import {
+  DEFAULT_NEW_TIME_OBJECT,
+  DEFAULT_REST_INTERVAL,
+} from "./constants/main";
+import Menu from "./components/Menu";
 import Modal from "./components/Modal";
 import { version } from "../package.json";
 import Footer from "./components/Footer";
 import ToggleSwitch from "./components/ToggleSwitch";
-
+import * as actions from "./modules/actions";
 const finishLineAudio = require("./audio/OK_Hand _Sign.wav");
+const tickAudio = require("./audio/notification_simple-01.wav");
+const partialFininshAudio = require("./audio/notification_high-intensity.wav");
 
 const App = (): ReactElement => {
   const [state, dispatch]: any = useReducer(reducer, initialState);
 
-  const startTimer = (index: number) => {
-    dispatch({ type: actionTypes.START_TIMER, index });
-  };
-
-  const deleteTimers = async () => {
-    dispatch({ type: actionTypes.DELETE_TIMERS });
-  };
-
-  const addNewTimer = (timer: iTimer) => {
-    dispatch({
-      type: actionTypes.ADD_NEW_TIMER,
-      timer,
-    });
-  };
-
-  const addRestIntervals = async (timer: iTimer) => {
-    dispatch({
-      type: actionTypes.ADD_REST_INTERVALS,
-      timer,
-    });
-  };
-
-  const removeRestIntervals = () => {
-    dispatch({
-      type: actionTypes.REMOVE_REST_INTERVALS,
-    });
-  };
-
+  const startTime = () => actions.startTime(dispatch);
+  const pauseTime = () => actions.pauseTime(dispatch);
+  const endTime = () => actions.endTime(dispatch);
+  const addNewTimer = (timer: iTimer) => actions.addNewTimer(timer, dispatch);
   const deleteTimer = async (index: number) => {
-    await dispatch({
-      type: actionTypes.DELETE_TIMER,
-      index,
-    });
+    actions.deleteTimer(index, dispatch);
   };
-  const resetTime = async (snapshot: []) => {
-    await dispatch({
-      type: actionTypes.RESET_TIME,
-      snapshot,
-    });
+  const addTime = (index: number) => actions.addTime(index, dispatch);
+  const reduceTime = (index: number) => actions.reduceTime(index, dispatch);
+  const resetTime = (snapshot: []) => actions.resetTime(dispatch);
+  const addRestIntervals = (timer: iTimer) =>
+    actions.addRestIntervals(timer, dispatch);
+  const removeRestIntervals = async () => {
+    actions.removeRestIntervals(dispatch);
   };
-
-  const pauseTime = async () => {
-    dispatch({ type: actionTypes.PAUSE_TIME });
-  };
-
-  const addTime = (index: number, time: number) => {
-    dispatch({ type: actionTypes.ADD_TIME, index, time });
-  };
-
-  const setTime = (index: number, time: number) => {
-    dispatch({ type: actionTypes.SET_TIME, index, time });
-  };
-
-  const reduceTime = (index: number, time: number) => {
-    dispatch({ type: actionTypes.REDUCE_TIME, index, time });
-  };
-
-  const takeSnapshop = async (snapshot: []) => {
-    dispatch({ type: actionTypes.TAKE_SNAPSHOT, snapshot });
-  };
-
-  const setTimerTitle = (index: number, title: number) => {
-    dispatch({ type: actionTypes.SET_TIMER_TITLE, index, title });
-  };
-
-  const showCredits = () => {
-    dispatch({ type: actionTypes.SHOW_CREDITS });
-  };
-
-  const showHelp = () => {
-    dispatch({ type: actionTypes.SHOW_HELP });
-  };
-
-  const audio = new Audio(finishLineAudio);
+  const takeSnapshop = (snapshot: []) =>
+    actions.takeSnapshop(snapshot, dispatch);
+  const setTimerTitle = (index: number, title: string) =>
+    actions.setTimerTitle(index, title, dispatch);
+  const showCredits = () => actions.showCredits(dispatch);
+  const showHelp = () => actions.showHelp(dispatch);
+  const setTime = (index: number, time: number) =>
+    actions.setTime(index, time, dispatch);
+  const audioCompleted = new Audio(finishLineAudio);
+  const audioTick = new Audio(tickAudio);
+  const audioPartialFininsh = new Audio(partialFininshAudio);
+  const theRunningTimer = state.timers.findIndex((e: any) => e.time > 0);
+  const theactiveTimer = state.timers.findIndex((e: any) => e.isActive);
 
   useEffect(() => {
-    if (state.timesUp) {
-      audio.play();
+    if (state.isRunning) {
+      // if there is a timmer with > 0, start time there
+      if (theRunningTimer > -1 && state.timers[theRunningTimer].time > 0) {
+        setTimeout(() => {
+          if (
+            state.timers[theRunningTimer].time < 5 &&
+            state.timers[theRunningTimer].time > 1
+          ) {
+            audioTick.play();
+          }
+          if (
+            state.timers[theRunningTimer].time < 2 &&
+            state.timers[theRunningTimer] !==
+              state.timers[state.timers.length - 1]
+          ) {
+            audioPartialFininsh.play();
+          }
+          setTime(theRunningTimer, state.timers[theRunningTimer].time - 1);
+        }, 1000);
+      } else if (theRunningTimer < 0) {
+        endTime();
+        audioCompleted.play();
+      }
     }
-  }, [audio, state.timesUp]);
+  }, [
+    audioCompleted,
+    audioPartialFininsh,
+    audioTick,
+    state.isRunning,
+    state.timers,
+    state.timesUp,
+    theRunningTimer,
+    theactiveTimer,
+  ]);
 
   return (
     <div
@@ -122,18 +111,9 @@ const App = (): ReactElement => {
               cssClass={state.restIntervalsToggle ? "isActive" : ""}
               callback={async () => {
                 if (!state.restIntervalsToggle) {
-                  console.log("add intervals");
-                  await takeSnapshop(state.timers);
-                  await deleteTimers();
-
-                  addRestIntervals({
-                    time: 20,
-                    isRestInvertal: true,
-                    title: "Rest",
-                  });
+                  await addRestIntervals(DEFAULT_REST_INTERVAL);
                 } else {
-                  await deleteTimers();
-                  removeRestIntervals();
+                  await removeRestIntervals();
                 }
               }}
             >
@@ -141,24 +121,23 @@ const App = (): ReactElement => {
             </ToggleSwitch>
           )}
 
-          <Button
-            cssClass=""
-            callBack={async () => {
-              await deleteTimers();
-              resetTime(
-                state.snapshots.length
-                  ? state.snapshots[state.snapshots.length - 1]
-                  : initialState.timers
-              );
-            }}
-          >
-            <i className="fas fa-sync-alt"></i> Reset timers
-          </Button>
+          {state.snapshot && (
+            <Button
+              cssClass=""
+              callBack={async () => {
+                resetTime(
+                  state.snapshot.length ? state.snapshot : initialState.timers
+                );
+              }}
+            >
+              <i className="fas fa-sync-alt"></i> Reset timers
+            </Button>
+          )}
           {state.isRunning && (
             <Button
               cssClass="primary"
-              callBack={async () => {
-                await pauseTime();
+              callBack={() => {
+                pauseTime();
               }}
             >
               <i className="fas fa-pause"></i> Pause
@@ -169,9 +148,9 @@ const App = (): ReactElement => {
             <Button
               cssClass="primary"
               callBack={async () => {
-                startTimer(0);
+                startTime();
 
-                if (!state.snapshots.length) {
+                if (!state.snapshot.length) {
                   takeSnapshop(state.timers);
                 }
               }}
@@ -187,46 +166,42 @@ const App = (): ReactElement => {
                 <Timer
                   key={i}
                   increaseTime={addTime}
-                  startTimer={startTimer}
                   reduceTime={reduceTime}
                   {...e}
                   index={i}
                   deleteTimer={deleteTimer}
-                  setTime={setTime}
                   isRunning={state.isRunning}
                   setTimerTitle={setTimerTitle}
+                  restIntervalsToggle={state.restIntervalsToggle}
                 />
               ))}
-
-            {state.placeholder.length > 0 && (
-              <div className="box__timeUp">
-                {state.placeholder.map((e: any, i: any) => (
-                  <Timer key={i} isPlaceholder={true} {...e} index={i} />
-                ))}
-              </div>
-            )}
           </div>
+          {state.timesUp && (
+            <div className="box__timeUp">
+              {state.placeholder.map((e: any, i: any) => (
+                <Timer key={i} isPlaceholder={true} {...e} index={i} />
+              ))}
+            </div>
+          )}
           <div className="box__actions">
             {!state.isRunning && !state.timesUp && (
               <Button
                 cssClass="secondary"
-                callBack={() => {
-                  addNewTimer({ time: 30, isActive: false });
-                }}
+                callBack={() => addNewTimer(DEFAULT_NEW_TIME_OBJECT)}
               >
                 <i className="fas fa-plus"></i> Add a timer
               </Button>
             )}
 
-            {!state.isRunning && state.timesUp && (
+            {/* {!state.isRunning && state.timesUp && (
               <>
                 <Button
                   cssClass=""
                   callBack={async () => {
-                    await deleteTimers();
+                    await emptyTimers();
                     resetTime(
-                      state.snapshots.length
-                        ? state.snapshots[state.snapshots.length - 1]
+                      state.snapshot.length
+                        ? state.snapshot[state.snapshot.length - 1]
                         : initialState.timers
                     );
                   }}
@@ -236,20 +211,20 @@ const App = (): ReactElement => {
                 <Button
                   cssClass="primary"
                   callBack={async () => {
-                    await deleteTimers();
+                    await emptyTimers();
                     await resetTime(
-                      state.snapshots.length
-                        ? state.snapshots[state.snapshots.length - 1]
+                      state.snapshot.length
+                        ? state.snapshot[state.snapshot.length - 1]
                         : initialState.timers
                     );
 
-                    startTimer(0);
+                    startTime();
                   }}
                 >
                   <i className="fas fa-play"></i> Go Again
                 </Button>
               </>
-            )}
+            )} */}
           </div>
         </div>
         <div className="u-text-align-right">

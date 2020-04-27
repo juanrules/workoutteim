@@ -2,28 +2,18 @@ import actionTypes from "../constants/actionTypes";
 import * as constants from "../constants/main";
 export default (state, action) => {
   switch (action.type) {
-    case actionTypes.START_TIMER:
-      // Reset the timers when they are all over
-      if (!state.timers[action.index]) {
-        return {
-          ...state,
-          isRunning: false,
-          timers: [],
-          placeholder: state.snapshots[state.snapshots.length - 1],
-          timesUp: true,
-        };
-      }
-
+    case actionTypes.START_TIME:
       return {
         ...state,
         isRunning: true,
-        timers: [
-          ...state.timers.map((e, i) =>
-            i === action.index
-              ? { ...e, isActive: true }
-              : { ...e, isActive: false }
-          ),
-        ],
+      };
+
+    case actionTypes.END_TIME:
+      return {
+        ...state,
+        isRunning: false,
+        timesUp: true,
+        timers: [...state.timers.map((e) => ({ ...e, isActive: false }))],
       };
 
     case actionTypes.PAUSE_TIME:
@@ -38,7 +28,9 @@ export default (state, action) => {
         ...state,
         timers: [
           ...state.timers.map((e, i) =>
-            i === action.index ? { ...e, time: action.time } : { ...e }
+            i === action.index
+              ? { ...e, time: action.time, isActive: true }
+              : { ...e }
           ),
         ],
       };
@@ -52,23 +44,28 @@ export default (state, action) => {
     case actionTypes.RESET_TIME:
       return {
         ...state,
-        timers: action.snapshot,
         placeholder: [],
         timesUp: false,
         isRunning: false,
+        timers: state.snapshot,
+        snapshot: [],
       };
 
     case actionTypes.ADD_NEW_TIMER:
+      const newTimer = state.restIntervalsToggle
+        ? [constants.DEFAULT_REST_INTERVAL, action.timer]
+        : [action.timer];
+
       return {
         ...state,
-        timers: [...state.timers, { ...action.timer }],
-        snapshots: [...state.snapshots, [...state.timers, action.timer]],
+        timers: [...state.timers, ...newTimer],
+        snapshot: [],
       };
 
     case actionTypes.ADD_REST_INTERVALS:
-      const timersPlusIntervals = state.snapshots[
-        state.snapshots.length - 1
-      ].reduce((acc, e) => acc.concat(e, action.timer), []);
+      const timersPlusIntervals = [
+        ...state.timers.reduce((acc, e) => acc.concat(e, action.timer), []),
+      ];
 
       timersPlusIntervals.pop();
 
@@ -76,29 +73,29 @@ export default (state, action) => {
         ...state,
         timers: timersPlusIntervals,
         restIntervalsToggle: true,
+        snapshot: [],
       };
 
     case actionTypes.REMOVE_REST_INTERVALS:
-      const timersMinusRestIntervals = [
-        ...state.snapshots[state.snapshots.length - 1].filter(
-          (e, i) => !e.isRestInvertal
-        ),
-      ];
       return {
         ...state,
-        timers: timersMinusRestIntervals,
+        timers: [...state.timers.filter((e, i) => !e.isRestInvertal)],
         restIntervalsToggle: false,
-        snapshots: [...state.snapshots, timersMinusRestIntervals],
+        snapshot: [],
       };
 
     case actionTypes.DELETE_TIMER:
       const filteredTimers = [
-        ...state.timers.filter((_e, i) => i !== action.index),
+        ...state.timers.filter(
+          (e, i) =>
+            i !== action.index && !(i === action.index + 1 && e.isRestInvertal)
+        ),
       ];
+
       return {
         ...state,
         timers: filteredTimers,
-        snapshots: [...state.snapshots, filteredTimers],
+        snapshot: [],
       };
 
     case actionTypes.SET_TIMER_TITLE:
@@ -111,7 +108,7 @@ export default (state, action) => {
       return {
         ...state,
         timers: newTitleTimers,
-        snapshots: [...state.snapshots, newTitleTimers],
+        snapshot: [],
       };
 
     case actionTypes.ADD_TIME:
@@ -126,7 +123,7 @@ export default (state, action) => {
       return {
         ...state,
         timers: addedTimeTimers,
-        snapshots: [...state.snapshots, addedTimeTimers],
+        snapshot: [],
       };
 
     case actionTypes.REDUCE_TIME:
@@ -147,13 +144,13 @@ export default (state, action) => {
       return {
         ...state,
         timers: reducedTimeTimers,
-        snapshots: [...state.snapshots, reducedTimeTimers],
+        snapshot: [],
       };
 
     case actionTypes.TAKE_SNAPSHOT:
       return {
         ...state,
-        snapshots: [...state.snapshots, action.snapshot],
+        snapshot: action.snapshot,
       };
 
     case actionTypes.SHOW_CREDITS:

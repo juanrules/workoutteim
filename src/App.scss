@@ -10,8 +10,11 @@
   --shadow-color: rgb(198, 208, 255);
   --light-text: #9cabe8;
   --accent-secondary-color: #60ffa6;
+  --lightest-color: #ffffff;
 }
-
+html {
+  scroll-behavior: smooth;
+}
 .Logo {
   text-align: center;
   margin: 2rem 0 3rem;
@@ -31,7 +34,7 @@ iframe {
 }
 body,
 html {
-  background: var(--light-color);
+  background-color: var(--light-color);
   height: 100%;
 }
 button,
@@ -48,12 +51,14 @@ a {
 }
 
 .box {
-  background: #f1f3ff;
-  box-shadow: -18px -18px 30px 0 #ffffff, 18px 18px 30px 0 var(--shadow-color);
+  background: var(--light-color);
+  box-shadow: -18px -18px 30px 0 var(--lightest-color),
+    18px 18px 30px 0 var(--shadow-color);
   border-radius: 23px;
   padding: 0 3rem 3rem;
   max-width: 800px;
   margin-bottom: 1rem;
+  position: relative;
 
   @include respondTo(sm) {
     max-width: 100%;
@@ -71,7 +76,11 @@ a {
   }
 
   &__timeUp {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
 
     &:after {
       content: "Times up! 🎉";
