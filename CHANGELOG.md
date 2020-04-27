@@ -1,6 +1,16 @@
 # Changelog
 
-## v0.2.1
+## 0.3.0
+
+- Google analytics code Style improvements
+- Mayor changes
+  -- Moved the time management out of the timer.tsx to the app to improve the state operations
+  -- Removed the amount of snapshots snaps throughout the actions. Now the app only keeps one in memory for resetting the times to their original state
+  -- New audio cues as per user (my friends) feedback
+- New constants for organising the code a bit better
+- New scroll utilities
+
+## 0.2.1
 
 - Fixing a bug that was preventing empty titles which was causing an odd behaviour in the UX
 - New style for the Rest interval stepper
