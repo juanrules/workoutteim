@@ -2,7 +2,8 @@
 
 .Button {
   background: var(--light-color);
-  box-shadow: -10px -10px 12px 0 #ffffff, 10px 10px 12px 0 var(--shadow-color);
+  box-shadow: -10px -10px 12px 0 var(--lightest-color),
+    10px 10px 12px 0 var(--shadow-color);
   border: none;
   border-radius: 0.5rem;
   transition: all 0.5s ease-in-out;

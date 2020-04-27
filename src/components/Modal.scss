@@ -4,8 +4,8 @@
   $block: &;
   visibility: hidden;
   max-width: 600px;
-  position: absolute;
-  top: calc(50% - 300px);
+  position: fixed;
+  top: 1rem;
   left: calc(50% - 300px);
   background-color: var(--main-color);
   color: white;
@@ -19,6 +19,7 @@
   opacity: 0;
   font-size: 1.25rem;
   font-family: "Barlow", sans-serif;
+  overflow-y: scroll;
 
   @include respondTo(sm) {
     left: 0;
