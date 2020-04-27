@@ -1,12 +1,14 @@
+const INITAL_TIMERS_SET = [
+  {
+    time: 60,
+    isActive: false,
+  },
+];
+
 export default {
   isRunning: false,
-  timers: [
-    {
-      time: 60,
-      isActive: false,
-    },
-  ],
-  snapshots: [],
+  timers: INITAL_TIMERS_SET,
+  snapshot: [INITAL_TIMERS_SET],
   placeholder: [],
   timesUp: false,
   showCredits: false,
