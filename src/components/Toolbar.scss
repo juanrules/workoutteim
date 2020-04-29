@@ -12,6 +12,10 @@
 
   & > button {
     grid-column: 2;
+
+    &:only-of-type {
+      grid-column: 3;
+    }
   }
   & > button + button {
     grid-column: 3;
