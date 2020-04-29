@@ -51,6 +51,12 @@ export default (state, action) => {
         snapshot: [],
       };
 
+    case actionTypes.SET_WORKOUT:
+      return {
+        ...state,
+        timers: action.workout,
+      };
+
     case actionTypes.ADD_NEW_TIMER:
       const newTimer = state.restIntervalsToggle
         ? [constants.DEFAULT_REST_INTERVAL, action.timer]
@@ -163,6 +169,12 @@ export default (state, action) => {
       return {
         ...state,
         showHelp: !state.showHelp,
+      };
+
+    case actionTypes.SHOW_SHARE_MODAL:
+      return {
+        ...state,
+        showShareModal: !state.showShareModal,
       };
 
     default:
