@@ -10,6 +10,7 @@ import { iTimer } from "./types";
 import {
   DEFAULT_NEW_TIME_OBJECT,
   DEFAULT_REST_INTERVAL,
+  INITAL_TIMERS_SET,
 } from "./constants/main";
 import Menu from "./components/Menu";
 import Modal from "./components/Modal";
@@ -17,6 +18,9 @@ import { version } from "../package.json";
 import Footer from "./components/Footer";
 import ToggleSwitch from "./components/ToggleSwitch";
 import * as actions from "./modules/actions";
+import { arrayToQueryString } from "./utilities/strings";
+import CopiableBox from "./components/CopiableBox";
+
 const finishLineAudio = require("./audio/OK_Hand _Sign.wav");
 const tickAudio = require("./audio/notification_simple-01.wav");
 const partialFininshAudio = require("./audio/notification_high-intensity.wav");
@@ -32,6 +36,8 @@ const App = (): ReactElement => {
     actions.deleteTimer(index, dispatch);
   };
   const addTime = (index: number) => actions.addTime(index, dispatch);
+  const setTime = (index: number, time: number) =>
+    actions.setTime(index, time, dispatch);
   const reduceTime = (index: number) => actions.reduceTime(index, dispatch);
   const resetTime = (snapshot: []) => actions.resetTime(dispatch);
   const addRestIntervals = (timer: iTimer) =>
@@ -41,19 +47,39 @@ const App = (): ReactElement => {
   };
   const takeSnapshop = (snapshot: []) =>
     actions.takeSnapshop(snapshot, dispatch);
+
+  const setWorkout = (workout: []) => actions.setWorkout(workout, dispatch);
   const setTimerTitle = (index: number, title: string) =>
     actions.setTimerTitle(index, title, dispatch);
   const showCredits = () => actions.showCredits(dispatch);
   const showHelp = () => actions.showHelp(dispatch);
-  const setTime = (index: number, time: number) =>
-    actions.setTime(index, time, dispatch);
+  const showShareModal = () => actions.showShareModal(dispatch);
+
   const audioCompleted = new Audio(finishLineAudio);
   const audioTick = new Audio(tickAudio);
   const audioPartialFininsh = new Audio(partialFininshAudio);
   const theRunningTimer = state.timers.findIndex((e: any) => e.time > 0);
   const theactiveTimer = state.timers.findIndex((e: any) => e.isActive);
 
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const workoutUrlPortion = urlParams.getAll("workout")[0];
+
   useEffect(() => {
+    // If there are query params in the url, use them unless the state hasn't been set
+    if (
+      queryString &&
+      urlParams &&
+      workoutUrlPortion.length &&
+      state.timers === initialState.timers
+    ) {
+      try {
+        setWorkout(JSON.parse(workoutUrlPortion));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
     if (state.isRunning) {
       // if there is a timmer with > 0, start time there
       if (theRunningTimer > -1 && state.timers[theRunningTimer].time > 0) {
@@ -82,11 +108,14 @@ const App = (): ReactElement => {
     audioCompleted,
     audioPartialFininsh,
     audioTick,
+    queryString,
     state.isRunning,
     state.timers,
     state.timesUp,
     theRunningTimer,
     theactiveTimer,
+    urlParams,
+    workoutUrlPortion,
   ]);
 
   return (
@@ -121,7 +150,7 @@ const App = (): ReactElement => {
             </ToggleSwitch>
           )}
 
-          {state.snapshot && (
+          {state.snapshot.length > 0 && (
             <Button
               cssClass=""
               callBack={async () => {
@@ -149,7 +178,6 @@ const App = (): ReactElement => {
               cssClass="primary"
               callBack={async () => {
                 startTime();
-
                 if (!state.snapshot.length) {
                   takeSnapshop(state.timers);
                 }
@@ -192,7 +220,11 @@ const App = (): ReactElement => {
                 <i className="fas fa-plus"></i> Add a timer
               </Button>
             )}
-
+            {state.timers.length && (
+              <Button cssClass="link" callBack={() => showShareModal()}>
+                <i className="fas fa-share"></i> Share this workout
+              </Button>
+            )}
             {/* {!state.isRunning && state.timesUp && (
               <>
                 <Button
@@ -280,6 +312,22 @@ const App = (): ReactElement => {
           ></iframe>
         </Modal>
       )}
+
+      {state.showShareModal && (
+        <Modal
+          isActive={state.showShareModal}
+          toggleModal={showShareModal}
+          title="Share this workout 💪"
+        >
+          <p>Use the link below to share this workout with your friends:</p>
+          <p>
+            (pts... you can also save the link for next time if you want to
+            repeat the workout)
+          </p>
+          <CopiableBox content={JSON.stringify(state.timers)} />
+        </Modal>
+      )}
+
       {state.showCredits && (
         <Modal
           isActive={state.showCredits}
