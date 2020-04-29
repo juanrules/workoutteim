@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1
+
+Encoding the sharing URL so it can be shared in social media and whatsapp, etc
+
 ## 0.4.0
 
 New functionality to share workouts:
