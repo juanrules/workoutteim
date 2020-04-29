@@ -57,6 +57,9 @@ export const removeRestIntervals = async (dispatch: any) => {
 export const setTime = (index: number, time: number, dispatch: any) => {
   dispatch({ type: actionTypes.SET_TIME, index, time });
 };
+export const setWorkout = (workout: [], dispatch: any) => {
+  dispatch({ type: actionTypes.SET_WORKOUT, workout });
+};
 
 export const takeSnapshop = async (snapshot: [], dispatch: any) => {
   dispatch({ type: actionTypes.TAKE_SNAPSHOT, snapshot });
@@ -72,4 +75,8 @@ export const showCredits = (dispatch: any) => {
 
 export const showHelp = (dispatch: any) => {
   dispatch({ type: actionTypes.SHOW_HELP });
+};
+
+export const showShareModal = (dispatch: any) => {
+  dispatch({ type: actionTypes.SHOW_SHARE_MODAL });
 };

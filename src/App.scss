@@ -27,6 +27,7 @@ body {
   align-items: center;
   color: var(--main-color);
   font-size: 16px;
+  margin: 0;
 }
 
 iframe {
@@ -35,8 +36,22 @@ iframe {
 body,
 html {
   background-color: var(--light-color);
+}
+
+body,
+html,
+#root,
+.App {
   height: 100%;
 }
+
+.App {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+}
+
 button,
 input {
   font-family: "Barlow Condensed", sans-serif;

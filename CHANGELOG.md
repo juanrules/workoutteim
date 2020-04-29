@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0
+
+New functionality to share workouts:
+
+- Reading the params from the url and replacing the initial state if the workout param is present and different from the initial one
+- Catching errors if the workout param is malformed (Still need to add validation per each individual timer)
+- New actions/constants/reducers to support the Shareable workouts and the share modal window
+- New query strings
+- Minor fix: Setting the footer to stay always in the bottom
+
 ## 0.3.0
 
 - Google analytics code Style improvements
