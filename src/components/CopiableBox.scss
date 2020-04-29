@@ -1,0 +1,13 @@
+.CopiableBox {
+  input[type="text"] {
+    padding: 1rem;
+    font-size: 1rem;
+    width: calc(100% - 3rem);
+    background-color: var(--light-color);
+    color: var(--main-color);
+    max-width: 100%;
+    border-radius: 0.5rem;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2) inset;
+    border: 0;
+  }
+}
