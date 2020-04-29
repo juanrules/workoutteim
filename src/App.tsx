@@ -324,7 +324,7 @@ const App = (): ReactElement => {
             (pts... you can also save the link for next time if you want to
             repeat the workout)
           </p>
-          <CopiableBox content={JSON.stringify(state.timers)} />
+          <CopiableBox content={encodeURI(JSON.stringify(state.timers))} />
         </Modal>
       )}
 
