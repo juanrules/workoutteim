@@ -45,6 +45,9 @@ const App = (): ReactElement => {
   const removeRestIntervals = async () => {
     actions.removeRestIntervals(dispatch);
   };
+  const toggleRestIntervals = async (toggle: boolean) => {
+    actions.toggleRestIntervals(toggle, dispatch);
+  };
   const takeSnapshop = (snapshot: []) =>
     actions.takeSnapshop(snapshot, dispatch);
 
@@ -64,19 +67,25 @@ const App = (): ReactElement => {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const workoutUrlPortion = urlParams.getAll("workout")[0];
+  const restIntervalsTogglePortion = urlParams.get("restIntervalsToggle");
 
   useEffect(() => {
     // If there are query params in the url, use them unless the state hasn't been set
-    if (
-      queryString &&
-      urlParams &&
-      workoutUrlPortion.length &&
-      state.timers === initialState.timers
-    ) {
-      try {
-        setWorkout(JSON.parse(workoutUrlPortion));
-      } catch (error) {
-        console.error(error);
+    if (queryString && urlParams) {
+      if (workoutUrlPortion.length && state.timers === initialState.timers) {
+        try {
+          setWorkout(JSON.parse(workoutUrlPortion));
+        } catch (error) {
+          console.error(error);
+        }
+
+        if (restIntervalsTogglePortion) {
+          try {
+            toggleRestIntervals(JSON.parse(restIntervalsTogglePortion));
+          } catch (error) {
+            console.error(error);
+          }
+        }
       }
     }
 
@@ -109,6 +118,7 @@ const App = (): ReactElement => {
     audioPartialFininsh,
     audioTick,
     queryString,
+    restIntervalsTogglePortion,
     state.isRunning,
     state.timers,
     state.timesUp,
@@ -150,7 +160,7 @@ const App = (): ReactElement => {
             </ToggleSwitch>
           )}
 
-          {state.snapshot.length > 0 && (
+          {state.snapshot.length > 0 && !state.isRunning && (
             <Button
               cssClass=""
               callBack={async () => {
@@ -220,48 +230,53 @@ const App = (): ReactElement => {
                 <i className="fas fa-plus"></i> Add a timer
               </Button>
             )}
-            {state.timers.length && (
-              <Button cssClass="link" callBack={() => showShareModal()}>
-                <i className="fas fa-share"></i> Share this workout
-              </Button>
-            )}
-            {/* {!state.isRunning && state.timesUp && (
-              <>
-                <Button
-                  cssClass=""
-                  callBack={async () => {
-                    await emptyTimers();
-                    resetTime(
-                      state.snapshot.length
-                        ? state.snapshot[state.snapshot.length - 1]
-                        : initialState.timers
-                    );
-                  }}
-                >
-                  <i className="fas fa-sync-alt"></i> Reset timers
-                </Button>
-                <Button
-                  cssClass="primary"
-                  callBack={async () => {
-                    await emptyTimers();
-                    await resetTime(
-                      state.snapshot.length
-                        ? state.snapshot[state.snapshot.length - 1]
-                        : initialState.timers
-                    );
 
-                    startTime();
-                  }}
-                >
-                  <i className="fas fa-play"></i> Go Again
-                </Button>
+            {!state.isRunning && state.timesUp && (
+              <>
+                {state.snapshot.length > 0 && (
+                  <Button
+                    cssClass=""
+                    callBack={async () => {
+                      resetTime(
+                        state.snapshot.length
+                          ? state.snapshot
+                          : initialState.timers
+                      );
+                    }}
+                  >
+                    <i className="fas fa-sync-alt"></i> Reset timers
+                  </Button>
+                )}
+                {!state.isRunning && state.timesUp && (
+                  <Button
+                    cssClass="primary"
+                    callBack={async () => {
+                      await resetTime(
+                        state.snapshot.length
+                          ? state.snapshot
+                          : initialState.timers
+                      );
+                      startTime();
+                      if (!state.snapshot.length) {
+                        takeSnapshop(state.timers);
+                      }
+                    }}
+                  >
+                    <i className="fas fa-play"></i> Go again
+                  </Button>
+                )}
               </>
-            )} */}
+            )}
           </div>
         </div>
-        <div className="u-text-align-right">
+        <div className="BottomToolbar">
+          {state.timers.length && (
+            <Button cssClass="link" callBack={() => showShareModal()}>
+              <i className="fas fa-share"></i> Share this workout
+            </Button>
+          )}
           <Button cssClass="link" callBack={() => showHelp()}>
-            How does this work?
+            <i className="fas fa-question-circle"></i> How does this work?
           </Button>
         </div>
       </main>
@@ -324,7 +339,11 @@ const App = (): ReactElement => {
             (pts... you can also save the link for next time if you want to
             repeat the workout)
           </p>
-          <CopiableBox content={encodeURI(JSON.stringify(state.timers))} />
+          <CopiableBox
+            content={`workout=${encodeURI(
+              JSON.stringify(state.timers)
+            )}&restIntervalsToggle=${state.restIntervalsToggle}`}
+          />
         </Modal>
       )}
 

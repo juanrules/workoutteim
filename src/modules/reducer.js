@@ -68,6 +68,12 @@ export default (state, action) => {
         snapshot: [],
       };
 
+    case actionTypes.TOGGLE_REST_INTERVALS:
+      return {
+        ...state,
+        restIntervalsToggle: action.toggle,
+      };
+
     case actionTypes.ADD_REST_INTERVALS:
       const timersPlusIntervals = [
         ...state.timers.reduce((acc, e) => acc.concat(e, action.timer), []),
