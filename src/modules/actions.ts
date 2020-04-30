@@ -54,6 +54,13 @@ export const removeRestIntervals = async (dispatch: any) => {
   });
 };
 
+export const toggleRestIntervals = async (toggle: boolean, dispatch: any) => {
+  dispatch({
+    type: actionTypes.TOGGLE_REST_INTERVALS,
+    toggle,
+  });
+};
+
 export const setTime = (index: number, time: number, dispatch: any) => {
   dispatch({ type: actionTypes.SET_TIME, index, time });
 };

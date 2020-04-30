@@ -11,7 +11,7 @@ const CopiableBox = ({ content }: iCopiableBox): ReactElement => {
     "//" +
     window.location.hostname +
     (window.location.port ? ":" + window.location.port : "")
-  }?workout=${content}`;
+  }?${content}`;
 
   return (
     <div className="CopiableBox">
