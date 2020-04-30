@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.2
+
+- Bringing back the Reset and Start over buttons when times is up.
+- Also including the fix from last commit n the main app file
+- Fixing a bug for when the Share url has rest intervals on that was causing a very quirk behaviour. Thanks Matja for pointing it out ♥
+
 ## 0.4.1
 
 Encoding the sharing URL so it can be shared in social media and whatsapp, etc
