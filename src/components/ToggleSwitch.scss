@@ -37,19 +37,19 @@
     transition: 0.3s;
   }
 
-  input:checked + label,
+  // input:checked + label,
   &.isActive input + label {
     background: var(--accent-color);
   }
 
-  input:checked + label:after,
+  // input:checked + label:after,
   &.isActive input + label:after {
     left: calc(100% - 1.25px);
     transform: translateX(-100%);
     box-shadow: 0 0 0 0px white;
   }
 
-  label:active:after,
+  // label:active:after,
   &.isActive label:active:after {
     width: 32.5px;
   }
