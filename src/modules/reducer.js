@@ -183,6 +183,12 @@ export default (state, action) => {
         showShareModal: !state.showShareModal,
       };
 
+    case actionTypes.SET_WORKOUT_SHORT_URL:
+      return {
+        ...state,
+        workoutShortUrl: action.url,
+      };
+
     default:
       return null;
   }

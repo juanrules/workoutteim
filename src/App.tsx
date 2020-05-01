@@ -10,7 +10,6 @@ import { iTimer } from "./types";
 import {
   DEFAULT_NEW_TIME_OBJECT,
   DEFAULT_REST_INTERVAL,
-  INITAL_TIMERS_SET,
 } from "./constants/main";
 import Menu from "./components/Menu";
 import Modal from "./components/Modal";
@@ -18,8 +17,9 @@ import { version } from "../package.json";
 import Footer from "./components/Footer";
 import ToggleSwitch from "./components/ToggleSwitch";
 import * as actions from "./modules/actions";
-import { arrayToQueryString } from "./utilities/strings";
 import CopiableBox from "./components/CopiableBox";
+import { db } from "./modules/db";
+import { generateUniqueId } from "./utilities/strings";
 
 const finishLineAudio = require("./audio/OK_Hand _Sign.wav");
 const tickAudio = require("./audio/notification_simple-01.wav");
@@ -39,7 +39,7 @@ const App = (): ReactElement => {
   const setTime = (index: number, time: number) =>
     actions.setTime(index, time, dispatch);
   const reduceTime = (index: number) => actions.reduceTime(index, dispatch);
-  const resetTime = (snapshot: []) => actions.resetTime(dispatch);
+  const resetTime = () => actions.resetTime(dispatch);
   const addRestIntervals = (timer: iTimer) =>
     actions.addRestIntervals(timer, dispatch);
   const removeRestIntervals = async () => {
@@ -56,14 +56,32 @@ const App = (): ReactElement => {
     actions.setTimerTitle(index, title, dispatch);
   const showCredits = () => actions.showCredits(dispatch);
   const showHelp = () => actions.showHelp(dispatch);
-  const showShareModal = () => actions.showShareModal(dispatch);
+  const showShareModal = () => {
+    return actions.showShareModal(dispatch);
+  };
+
+  const setWorkoutShortUrl = async (url: string) =>
+    actions.setWorkoutShortUrl(url, dispatch);
+
+  const host =
+    window.location.protocol +
+    "//" +
+    window.location.hostname +
+    (window.location.port ? ":" + window.location.port : "");
+
+  const writeShortUrlToFirebase = async (id: string) => {
+    const workOutContent = `{"workout":${encodeURI(
+      JSON.stringify(state.timers)
+    )},"restIntervalsToggle":${state.restIntervalsToggle}}`;
+
+    await db.ref("workouts/" + id).set(workOutContent);
+  };
 
   const audioCompleted = new Audio(finishLineAudio);
   const audioTick = new Audio(tickAudio);
   const audioPartialFininsh = new Audio(partialFininshAudio);
   const theRunningTimer = state.timers.findIndex((e: any) => e.time > 0);
   const theactiveTimer = state.timers.findIndex((e: any) => e.isActive);
-
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const workoutUrlPortion = urlParams.getAll("workout")[0];
@@ -74,17 +92,23 @@ const App = (): ReactElement => {
     if (queryString && urlParams) {
       if (workoutUrlPortion.length && state.timers === initialState.timers) {
         try {
-          setWorkout(JSON.parse(workoutUrlPortion));
+          db.ref("workouts/" + workoutUrlPortion)
+            .once("value")
+            .then((snapshot) => {
+              const parsedValue = JSON.parse(decodeURI(snapshot.val()));
+              const workout =
+                parsedValue && parsedValue.workout
+                  ? parsedValue.workout
+                  : initialState.timers;
+              const restIntervals =
+                parsedValue && parsedValue.restIntervalsToggle
+                  ? parsedValue.restIntervalsToggle
+                  : false;
+              setWorkout(workout);
+              toggleRestIntervals(JSON.parse(restIntervals));
+            });
         } catch (error) {
           console.error(error);
-        }
-
-        if (restIntervalsTogglePortion) {
-          try {
-            toggleRestIntervals(JSON.parse(restIntervalsTogglePortion));
-          } catch (error) {
-            console.error(error);
-          }
         }
       }
     }
@@ -164,9 +188,7 @@ const App = (): ReactElement => {
             <Button
               cssClass=""
               callBack={async () => {
-                resetTime(
-                  state.snapshot.length ? state.snapshot : initialState.timers
-                );
+                resetTime();
               }}
             >
               <i className="fas fa-sync-alt"></i> Reset timers
@@ -237,11 +259,7 @@ const App = (): ReactElement => {
                   <Button
                     cssClass=""
                     callBack={async () => {
-                      resetTime(
-                        state.snapshot.length
-                          ? state.snapshot
-                          : initialState.timers
-                      );
+                      resetTime();
                     }}
                   >
                     <i className="fas fa-sync-alt"></i> Reset timers
@@ -251,11 +269,7 @@ const App = (): ReactElement => {
                   <Button
                     cssClass="primary"
                     callBack={async () => {
-                      await resetTime(
-                        state.snapshot.length
-                          ? state.snapshot
-                          : initialState.timers
-                      );
+                      await resetTime();
                       startTime();
                       if (!state.snapshot.length) {
                         takeSnapshop(state.timers);
@@ -271,7 +285,16 @@ const App = (): ReactElement => {
         </div>
         <div className="BottomToolbar">
           {state.timers.length && (
-            <Button cssClass="link" callBack={() => showShareModal()}>
+            <Button
+              cssClass="link"
+              callBack={async () => {
+                const workoutId = generateUniqueId();
+                await writeShortUrlToFirebase(workoutId);
+                await setWorkoutShortUrl(`${host}?workout=${workoutId}`);
+
+                showShareModal();
+              }}
+            >
               <i className="fas fa-share"></i> Share this workout
             </Button>
           )}
@@ -339,11 +362,7 @@ const App = (): ReactElement => {
             (pts... you can also save the link for next time if you want to
             repeat the workout)
           </p>
-          <CopiableBox
-            content={`workout=${encodeURI(
-              JSON.stringify(state.timers)
-            )}&restIntervalsToggle=${state.restIntervalsToggle}`}
-          />
+          <CopiableBox content={state.workoutShortUrl} />
         </Modal>
       )}
 

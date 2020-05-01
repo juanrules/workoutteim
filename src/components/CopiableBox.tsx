@@ -6,18 +6,11 @@ interface iCopiableBox {
 }
 
 const CopiableBox = ({ content }: iCopiableBox): ReactElement => {
-  const url = `${
-    window.location.protocol +
-    "//" +
-    window.location.hostname +
-    (window.location.port ? ":" + window.location.port : "")
-  }?${content}`;
-
   return (
     <div className="CopiableBox">
       <input
         type="text"
-        value={url}
+        value={content}
         autoFocus
         readOnly
         onFocus={(event) => event.target.select()}

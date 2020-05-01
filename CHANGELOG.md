@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0
+
+- New action/reducer for setting up the shorturl
+- Bug fix on the toggle switch for when the rest intervals are set programatically
+- New functionality to use the short urls instead of the long ones
+
 ## 0.4.2
 
 - Bringing back the Reset and Start over buttons when times is up.
