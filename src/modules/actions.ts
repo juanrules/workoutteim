@@ -87,3 +87,7 @@ export const showHelp = (dispatch: any) => {
 export const showShareModal = (dispatch: any) => {
   dispatch({ type: actionTypes.SHOW_SHARE_MODAL });
 };
+
+export const setWorkoutShortUrl = (url: string, dispatch: any) => {
+  dispatch({ type: actionTypes.SET_WORKOUT_SHORT_URL, url });
+};
