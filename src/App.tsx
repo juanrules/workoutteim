@@ -13,18 +13,19 @@ import {
 } from "./constants/main";
 import Menu from "./components/Menu";
 import Modal from "./components/Modal";
-import { version } from "../package.json";
 import Footer from "./components/Footer";
 import ToggleSwitch from "./components/ToggleSwitch";
 import * as actions from "./modules/actions";
 import CopiableBox from "./components/CopiableBox";
-import { db } from "./modules/db";
-import { generateUniqueId } from "./utilities/strings";
 
 const finishLineAudio = require("./audio/OK_Hand _Sign.wav");
 const tickAudio = require("./audio/notification_simple-01.wav");
 const partialFininshAudio = require("./audio/notification_high-intensity.wav");
 
+const audioCompleted = new Audio(finishLineAudio);
+const audioTick = new Audio(tickAudio);
+const audioPartialFininsh = new Audio(partialFininshAudio);
+    
 const App = (): ReactElement => {
   const [state, dispatch]: any = useReducer(reducer, initialState);
 
@@ -68,18 +69,6 @@ const App = (): ReactElement => {
     "//" +
     window.location.hostname +
     (window.location.port ? ":" + window.location.port : "");
-
-  const writeShortUrlToFirebase = async (id: string) => {
-    const workOutContent = `{"workout":${encodeURI(
-      JSON.stringify(state.timers)
-    )},"restIntervalsToggle":${state.restIntervalsToggle}}`;
-
-    await db.ref("workouts/" + id).set(workOutContent);
-  };
-
-  const audioCompleted = new Audio(finishLineAudio);
-  const audioTick = new Audio(tickAudio);
-  const audioPartialFininsh = new Audio(partialFininshAudio);
   const theRunningTimer = state.timers.findIndex((e: any) => e.time > 0);
   const theactiveTimer = state.timers.findIndex((e: any) => e.isActive);
   const queryString = window.location.search;
@@ -88,27 +77,16 @@ const App = (): ReactElement => {
   const restIntervalsTogglePortion = urlParams.get("restIntervalsToggle");
 
   useEffect(() => {
-    // If there are query params in the url, use them unless the state hasn't been set
-    if (queryString && urlParams) {
+    // Load workout from URL parameters if present
+    if (queryString && urlParams && workoutUrlPortion) {
       if (workoutUrlPortion.length && state.timers === initialState.timers) {
         try {
-          db.ref("workouts/" + workoutUrlPortion)
-            .once("value")
-            .then((snapshot) => {
-              const parsedValue = JSON.parse(decodeURI(snapshot.val()));
-              const workout =
-                parsedValue && parsedValue.workout
-                  ? parsedValue.workout
-                  : initialState.timers;
-              const restIntervals =
-                parsedValue && parsedValue.restIntervalsToggle
-                  ? parsedValue.restIntervalsToggle
-                  : false;
-              setWorkout(workout);
-              toggleRestIntervals(JSON.parse(restIntervals));
-            });
+          const decodedWorkout = JSON.parse(decodeURIComponent(workoutUrlPortion));
+          const restIntervals = restIntervalsTogglePortion === 'true';
+          setWorkout(decodedWorkout);
+          toggleRestIntervals(restIntervals);
         } catch (error) {
-          console.error(error);
+          console.error('Error parsing workout from URL:', error);
         }
       }
     }
@@ -288,10 +266,10 @@ const App = (): ReactElement => {
             <Button
               cssClass="link"
               callBack={async () => {
-                const workoutId = generateUniqueId();
-                await writeShortUrlToFirebase(workoutId);
-                await setWorkoutShortUrl(`${host}?workout=${workoutId}`);
-
+                const workoutData = encodeURIComponent(JSON.stringify(state.timers));
+                const restIntervals = state.restIntervalsToggle;
+                const shareUrl = `${host}?workout=${workoutData}&restIntervalsToggle=${restIntervals}`;
+                await setWorkoutShortUrl(shareUrl);
                 showShareModal();
               }}
             >
@@ -317,7 +295,7 @@ const App = (): ReactElement => {
           href="https://github.com/juanrules/workoutteim/releases"
           title="Repository releases"
         >
-          v{version}
+          v0.5.0
         </a>
       </Footer>
       {state.showHelp && (
